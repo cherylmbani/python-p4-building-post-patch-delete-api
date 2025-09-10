@@ -82,5 +82,29 @@ def users():
 
     return response
 
+@app.route('/reviews/<int:id>', method=["GET", "DELETE"])
+def review_by_id(id):
+    review=Review.query.filter(Review.id==id).first()
+
+    if request.method=="GET":
+        review_dict=review.to_dict
+        response=make_response(review_dict, 200)
+        return response
+    elif request.method=="DELETE":
+        db.session.delete(review)
+        db.session.commit()
+
+        response_body={
+            "delete_successfull": True,
+            "message": "Review deleted"
+        }
+        reponse=make_response(
+            response_body, 
+            200
+        )
+        return response
+
+
+
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
